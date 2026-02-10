@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <title>Numo • A Special Request</title>
 
-  <!-- Romantic & Elegant Fonts -->
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600;700&family=Cormorant+Garamond:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700;800&family=Great+Vibes&family=Parisienne&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Dancing+Script:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
     :root{
@@ -24,7 +24,6 @@
       --muted: rgba(122,43,98,.70);
 
       --shadow: 0 22px 70px rgba(122,43,98,.18);
-
       --noBg: rgba(255,255,255,.82);
       --noStroke: rgba(122,43,98,.14);
     }
@@ -35,19 +34,18 @@
       min-height:100vh;
       display:grid;
       place-items:center;
-      padding:24px;
+      padding:16px;
       color:var(--text);
-      font-family: "Cormorant Garamond", "Playfair Display", Georgia, serif;
-      font-weight: 400;
+      font-family: "Manrope", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      font-weight: 500;
       background:
         radial-gradient(900px 600px at 18% 18%, var(--bg4), transparent 60%),
         radial-gradient(900px 600px at 82% 28%, var(--bg3), transparent 60%),
         radial-gradient(1000px 700px at 50% 88%, #fff7fb, transparent 60%),
         linear-gradient(135deg, var(--bg1), var(--bg2) 45%, #f3eaff 100%);
-      overflow:hidden;
+      overflow-x: hidden;
     }
 
-    /* soft premium haze */
     body:before{
       content:"";
       position:fixed;
@@ -62,7 +60,6 @@
       z-index:0;
     }
 
-    /* cinematic vignette */
     body:after{
       content:"";
       position:fixed;
@@ -75,10 +72,10 @@
           rgba(0,0,0,.12) 78%,
           rgba(0,0,0,.18) 100%);
       mix-blend-mode: multiply;
-      opacity:.30;
+      opacity:.18;
     }
 
-    /* floating background layer */
+    /* floating background */
     #bgFloat{
       position:fixed;
       inset:0;
@@ -102,30 +99,72 @@
       to{ transform: translateY(-120vh) translateX(40px) scale(1.05); opacity:0; }
     }
 
+    /* ===== Floating lyrics (many, side-only, avoids center) ===== */
+    #lyricLayer{
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 6;  /* above bgFloat (1), below card (10) */
+      overflow: hidden;
+    }
+    .lyricFloat{
+      position: absolute;
+      left: 0;
+      top: 0;
+      white-space: nowrap;
+      user-select: none;
+
+      font-family: "Playfair Display", Georgia, serif;
+      font-style: italic;
+      font-weight: 600;
+
+      /* ✅ bit transparent but readable */
+      color: rgba(122,43,98,.45);
+      text-shadow: 0 10px 26px rgba(255,77,160,.10);
+
+      opacity: 0;
+      will-change: transform, opacity;
+
+      animation: lyricRise linear forwards;
+    }
+    @keyframes lyricRise{
+      0%   { transform: translate3d(0, 30px, 0) rotate(var(--rot)) scale(var(--sc)); opacity: 0; }
+      10%  { opacity: var(--op); }
+      80%  { opacity: var(--op); }
+      100% { transform: translate3d(var(--dx), calc(-120vh), 0) rotate(var(--rot)) scale(var(--sc)); opacity: 0; }
+    }
+
+    /* card */
     .card{
-      width:min(920px, 94vw);
-      padding:clamp(18px, 3.6vw, 38px);
-      border-radius:28px;
-      background:linear-gradient(180deg, rgba(255,255,255,.72), rgba(255,255,255,.52));
-      box-shadow:var(--shadow);
+      width: min(94vw, 500px);
+      padding: clamp(14px, 4vw, 28px);
+      border-radius: 20px;
+      background: linear-gradient(180deg, rgba(255,255,255,.72), rgba(255,255,255,.52));
+      box-shadow: var(--shadow);
       backdrop-filter: blur(14px);
-      position:relative;
-      overflow:hidden;
-      z-index:2;
-      transform-origin:center;
+      position: relative;
+      overflow: hidden;
+      z-index: 10;
+      transform-origin: center;
       transition: transform 900ms cubic-bezier(.2,.9,.2,1), filter 900ms cubic-bezier(.2,.9,.2,1);
+    }
+    @media (min-width: 768px) {
+      .card {
+        width: min(94vw, 700px);
+        padding: clamp(18px, 3.6vw, 38px);
+        border-radius: 28px;
+      }
     }
     .card.zoom{
       transform: scale(1.03);
       filter: saturate(1.06) contrast(1.03);
     }
 
-    /* animated border glow */
     .card:before{
       content:"";
       position:absolute;
       inset:-2px;
-      border-radius:30px;
+      border-radius: inherit;
       padding:2px;
       background: linear-gradient(120deg,
         rgba(255,77,160,.55),
@@ -146,8 +185,8 @@
       display:flex;
       justify-content:space-between;
       align-items:center;
-      gap:12px;
-      margin-bottom:14px;
+      gap:8px;
+      margin-bottom:12px;
       flex-wrap:wrap;
       position:relative;
       z-index:2;
@@ -155,63 +194,72 @@
     .badge{
       display:inline-flex;
       align-items:center;
-      gap:10px;
-      padding:8px 12px;
+      gap:8px;
+      padding:6px 10px;
       border-radius:999px;
       background:rgba(255,255,255,.62);
       border:1px solid rgba(122,43,98,.10);
-      font-family: "Cormorant Garamond", Georgia, serif;
-      font-weight: 600;
-      font-size:13.5px;
-      letter-spacing:.8px;
+      font-family: "Manrope", sans-serif;
+      font-weight: 700;
+      font-size: clamp(11px, 2.5vw, 13px);
+      letter-spacing:.6px;
       text-transform:uppercase;
       color:rgba(122,43,98,.78);
     }
 
     h1{
-      margin:12px 0 10px;
-      font-family: "Great Vibes", "Dancing Script", cursive;
-      font-size:clamp(34px, 4.5vw, 60px);
-      line-height:1.05;
-      text-align:center;
-      letter-spacing:.5px;
+      margin: 8px 0;
+      font-family: "Dancing Script", cursive;
+      font-size: clamp(28px, 7vw, 48px);
+      line-height: 1.1;
+      text-align: center;
+      letter-spacing:.4px;
       animation: fadeUp .8s ease both;
       background: linear-gradient(135deg, #8a2d62, #ff4da0);
-      -webkit-background-clip:text;
-      background-clip:text;
-      color:transparent;
-      position:relative;
-      z-index:2;
-      font-weight: 400;
-      text-shadow: 0 2px 10px rgba(255,77,160,.15);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      position: relative;
+      z-index: 2;
+      font-weight: 700;
+      text-shadow: 0 2px 10px rgba(255,77,160,.12);
+      padding: 0 8px;
     }
+    @media (min-width: 768px) {
+      h1 { font-size: clamp(34px, 4.5vw, 60px); margin: 12px 0 10px; }
+    }
+
     .hint{
       text-align:center;
-      margin:0 0 18px;
+      margin:0 0 14px;
       color:var(--muted);
-      font-family: "Cormorant Garamond", Georgia, serif;
-      font-size:clamp(16px, 1.8vw, 18px);
-      font-weight: 400;
+      font-family: "Manrope", sans-serif;
+      font-size:clamp(13px, 3.5vw, 15px);
+      font-weight: 500;
       animation: fadeUp .9s ease both;
       animation-delay:.08s;
       position:relative;
       z-index:2;
       font-style: italic;
+      padding: 0 8px;
     }
 
-    .stage{ display:grid; place-items:center; margin-top:8px; position:relative; z-index:2; }
+    .stage{ display:grid; place-items:center; margin-top:6px; position:relative; z-index:2; }
 
     .playArea{
-      width:min(760px, 92vw);
-      height:300px;
-      position:relative;
-      border-radius:24px;
-      border:1px solid rgba(255,255,255,.85);
+      width: min(90vw, 400px);
+      height: 250px;
+      position: relative;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.85);
       background:
-        radial-gradient(900px 420px at 50% 0%, rgba(255,255,255,.70), transparent 65%),
+        radial-gradient(600px 300px at 50% 0%, rgba(255,255,255,.70), transparent 65%),
         rgba(255,255,255,.22);
-      overflow:hidden;
-      padding:18px;
+      overflow: hidden;
+      padding: 14px;
+    }
+    @media (min-width: 768px) {
+      .playArea { width: min(92vw, 600px); height: 300px; border-radius: 24px; padding: 18px; }
     }
     .playArea:before{
       content:"";
@@ -223,49 +271,53 @@
     }
 
     .btnRow{
-      position:absolute;
-      left:50%;
-      top:50%;
-      transform:translate(-50%, -50%);
-      display:flex;
-      gap:18px;
-      align-items:center;
-      justify-content:center;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: center;
       width: fit-content;
-      z-index:2;
+      z-index: 2;
+      flex-wrap: wrap;
     }
+    @media (min-width: 768px) { .btnRow { gap: 18px; } }
 
     button{
-      border:0;
-      cursor:pointer;
-      border-radius:999px;
-      letter-spacing:.4px;
-      width: 156px;
-      height: 52px;
-      outline:none;
-      user-select:none;
+      border: 0;
+      cursor: pointer;
+      border-radius: 999px;
+      letter-spacing: .2px;
+      width: min(140px, 40vw);
+      height: 46px;
+      outline: none;
+      user-select: none;
       -webkit-tap-highlight-color: transparent;
       transition: box-shadow .22s ease, opacity .22s ease, left .25s ease, top .25s ease, transform .22s ease, filter .22s ease;
-      position:relative;
+      position: relative;
       overflow: hidden;
+      font-family: "Manrope", sans-serif;
+      font-weight: 800;
+      font-size: 16px;
+      z-index: 12;
     }
+    @media (min-width: 768px) { button { width: 156px; height: 52px; font-size: 16px; } }
     button:focus-visible{
       box-shadow: 0 0 0 3px rgba(255,77,160,.22), 0 18px 40px rgba(122,43,98,.18);
     }
 
-    /* irresistible YES */
     .yes{
       --ys: 1;
       --glow: 0.30;
       background: linear-gradient(135deg, var(--rose), var(--rose2));
-      color:#fff;
+      color: #fff;
       box-shadow: 0 16px 36px rgba(255,77,160,.22);
       transform: scale(var(--ys));
       will-change: transform, box-shadow;
       animation: heartbeat 1.55s ease-in-out infinite;
-      font-family: "Parisienne", "Dancing Script", cursive;
-      font-size: 22px;
-      font-weight: 500;
+      z-index: 12;
     }
     .yes:after{
       content:"";
@@ -289,9 +341,9 @@
     }
     @keyframes heartbeat{
       0%, 100%{ transform: scale(var(--ys)); }
-      40%{ transform: scale(calc(var(--ys) * 1.04)); }
-      55%{ transform: scale(calc(var(--ys) * 0.99)); }
-      72%{ transform: scale(calc(var(--ys) * 1.03)); }
+      40%{ transform: scale(calc(var(--ys) * 1.06)); }
+      55%{ transform: scale(calc(var(--ys) * 0.98)); }
+      72%{ transform: scale(calc(var(--ys) * 1.04)); }
     }
     @keyframes shine{
       0%{ transform: translateX(-70%) rotate(10deg); }
@@ -299,7 +351,7 @@
       100%{ transform: translateX(70%) rotate(10deg); }
     }
 
-    /* NO button with realistic glass cracking effect */
+    /* NO glass */
     .no{
       --crack-opacity: 0;
       --crack-1: 0;
@@ -309,90 +361,66 @@
       --crack-5: 0;
       --crack-6: 0;
       --glass-blur: 0px;
-      
-      background: linear-gradient(135deg, 
+
+      background: linear-gradient(135deg,
         rgba(255, 255, 255, 0.85),
         rgba(248, 248, 255, 0.78),
         rgba(255, 255, 255, 0.85));
       color: rgba(122,43,98,.90);
       border: 1px solid rgba(255, 255, 255, 0.4);
-      box-shadow: 
+      box-shadow:
         0 14px 30px rgba(122,43,98,.12),
         inset 0 0 0 1px rgba(255, 255, 255, 0.6),
         inset 0 0 20px rgba(255, 255, 255, 0.3);
       backdrop-filter: blur(10px);
-      font-family: "Cormorant Garamond", Georgia, serif;
-      font-size: 18px;
-      font-weight: 600;
       position: relative;
       overflow: hidden;
+      z-index: 12;
     }
-
-    /* Glass shine effect */
     .no:before {
       content: "";
       position: absolute;
       inset: 0;
-      background: linear-gradient(120deg, 
-        transparent 30%, 
-        rgba(255, 255, 255, 0.4) 50%, 
+      background: linear-gradient(120deg,
+        transparent 30%,
+        rgba(255, 255, 255, 0.4) 50%,
         transparent 70%);
       opacity: 0.5;
       pointer-events: none;
       z-index: 1;
     }
-
-    /* Cracks layer - REALISTIC GLASS CRACKS */
     .no:after {
       content: "";
       position: absolute;
       inset: 0;
       background:
-        /* Primary crack lines - thicker and more prominent */
-        linear-gradient(65deg, 
-          transparent calc(45% - var(--crack-1)), 
-          rgba(122, 43, 98, 0.4) calc(45% - var(--crack-1)) calc(46% - var(--crack-1)), 
+        linear-gradient(65deg,
+          transparent calc(45% - var(--crack-1)),
+          rgba(122, 43, 98, 0.4) calc(45% - var(--crack-1)) calc(46% - var(--crack-1)),
           transparent calc(46% - var(--crack-1))),
-        linear-gradient(120deg, 
-          transparent calc(52% - var(--crack-2)), 
-          rgba(122, 43, 98, 0.35) calc(52% - var(--crack-2)) calc(53% - var(--crack-2)), 
+        linear-gradient(120deg,
+          transparent calc(52% - var(--crack-2)),
+          rgba(122, 43, 98, 0.35) calc(52% - var(--crack-2)) calc(53% - var(--crack-2)),
           transparent calc(53% - var(--crack-2))),
-        linear-gradient(25deg, 
-          transparent calc(60% - var(--crack-3)), 
-          rgba(122, 43, 98, 0.3) calc(60% - var(--crack-3)) calc(61% - var(--crack-3)), 
+        linear-gradient(25deg,
+          transparent calc(60% - var(--crack-3)),
+          rgba(122, 43, 98, 0.3) calc(60% - var(--crack-3)) calc(61% - var(--crack-3)),
           transparent calc(61% - var(--crack-3))),
-        
-        /* Secondary finer cracks */
-        linear-gradient(85deg, 
-          transparent calc(35% - var(--crack-4)), 
-          rgba(122, 43, 98, 0.25) calc(35% - var(--crack-4)) calc(35.5% - var(--crack-4)), 
+        linear-gradient(85deg,
+          transparent calc(35% - var(--crack-4)),
+          rgba(122, 43, 98, 0.25) calc(35% - var(--crack-4)) calc(35.5% - var(--crack-4)),
           transparent calc(35.5% - var(--crack-4))),
-        linear-gradient(150deg, 
-          transparent calc(70% - var(--crack-5)), 
-          rgba(122, 43, 98, 0.2) calc(70% - var(--crack-5)) calc(70.5% - var(--crack-5)), 
+        linear-gradient(150deg,
+          transparent calc(70% - var(--crack-5)),
+          rgba(122, 43, 98, 0.2) calc(70% - var(--crack-5)) calc(70.5% - var(--crack-5)),
           transparent calc(70.5% - var(--crack-5))),
-        linear-gradient(10deg, 
-          transparent calc(20% - var(--crack-6)), 
-          rgba(122, 43, 98, 0.15) calc(20% - var(--crack-6)) calc(20.5% - var(--crack-6)), 
+        linear-gradient(10deg,
+          transparent calc(20% - var(--crack-6)),
+          rgba(122, 43, 98, 0.15) calc(20% - var(--crack-6)) calc(20.5% - var(--crack-6)),
           transparent calc(20.5% - var(--crack-6))),
-        
-        /* Crack intersections/spiderweb effect */
-        radial-gradient(circle at 40% 60%, 
-          transparent 0%,
-          transparent calc(40% - var(--crack-1)),
-          rgba(122, 43, 98, 0.3) calc(40% - var(--crack-1)) calc(41% - var(--crack-1)),
-          transparent calc(41% - var(--crack-1))),
-        radial-gradient(circle at 65% 35%, 
-          transparent 0%,
-          transparent calc(35% - var(--crack-2)),
-          rgba(122, 43, 98, 0.25) calc(35% - var(--crack-2)) calc(36% - var(--crack-2)),
-          transparent calc(36% - var(--crack-2))),
-        
-        /* Glass distortion/blur effect */
-        radial-gradient(circle at 50% 50%, 
+        radial-gradient(circle at 50% 50%,
           rgba(255, 255, 255, 0.1) 0%,
           transparent 70%);
-      
       opacity: var(--crack-opacity);
       filter: blur(var(--glass-blur));
       mix-blend-mode: multiply;
@@ -401,7 +429,6 @@
       transition: all 0.4s cubic-bezier(0.2, 0.9, 0.2, 1);
     }
 
-    /* Small crack pieces that appear on button surface */
     .crack-piece {
       position: absolute;
       background: transparent;
@@ -414,63 +441,71 @@
     }
 
     .msg{
-      margin-top:16px;
-      min-height:58px;
-      display:grid;
-      place-items:center;
-      text-align:center;
-      font-family: "Dancing Script", cursive;
-      font-size:clamp(22px, 2.5vw, 28px);
-      padding:8px 12px;
-      color:rgba(122,43,98,.92);
-      font-weight: 500;
+      margin-top: 14px;
+      min-height: 50px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      font-family: "Playfair Display", Georgia, serif;
+      font-size: clamp(17px, 4.5vw, 22px);
+      padding: 6px 10px;
+      color: rgba(122,43,98,.92);
+      font-weight: 600;
       transition: opacity 0.4s ease;
+      z-index: 12;
+      position: relative;
     }
     .final{
-      margin-top:12px;
-      text-align:center;
-      font-family: "Playfair Display", Georgia, serif;
-      font-size:clamp(20px, 2.4vw, 26px);
-      color:rgba(122,43,98,.90);
+      margin-top: 10px;
+      text-align: center;
+      font-family: "Manrope", sans-serif;
+      font-size: clamp(14px, 3.7vw, 16px);
+      color: rgba(122,43,98,.82);
       animation: fadeUp .7s ease both;
       min-height: 34px;
-      font-weight: 500;
-      font-style: italic;
+      font-weight: 600;
       transition: opacity 0.5s ease;
+      padding: 0 10px;
+      z-index: 12;
+      position: relative;
     }
     .dramatic{
-      text-shadow: 0 10px 40px rgba(255,77,160,.16);
+      text-shadow: 0 10px 40px rgba(255,77,160,.12);
       animation: dramaticIn 1.05s ease both;
     }
     .legendaryYes{
-      font-size: clamp(24px, 2.8vw, 34px) !important;
+      font-size: clamp(18px, 4.6vw, 26px) !important;
       color: rgba(122,43,98,.95) !important;
-      text-shadow: 0 0 26px rgba(255,77,160,.20), 0 18px 60px rgba(255,77,160,.12);
-    }
-    .toBe{
-      margin-top: 10px;
-      font-family: "Parisienne", cursive;
-      font-size: clamp(20px, 2.2vw, 24px);
-      letter-spacing: 1px;
-      color: rgba(122,43,98,.72);
-      opacity:0;
-      animation: fadeUp .9s ease forwards;
+      text-shadow: 0 0 26px rgba(255,77,160,.18), 0 18px 60px rgba(255,77,160,.10);
     }
 
-    /* Celebration Modal */
+    .replayBtn{
+      margin-top: 10px;
+      padding: 9px 16px;
+      border: 1px solid rgba(255,77,160,.22);
+      background: rgba(255,77,160,.12);
+      color: rgba(122,43,98,.92);
+      font-weight: 800;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: transform .15s ease, box-shadow .15s ease;
+    }
+    .replayBtn:hover{ transform: translateY(-1px); box-shadow: 0 16px 40px rgba(122,43,98,.12); }
+
+    /* Celebration modal */
     .modal{
       position:fixed;
       inset:0;
       display:none;
       place-items:center;
-      padding:20px;
+      padding:16px;
       background:rgba(20,6,37,.35);
-      z-index:90;
+      z-index:99;
       backdrop-filter: blur(6px);
     }
     .modalCard{
-      width:min(520px, 92vw);
-      border-radius:22px;
+      width:min(90vw, 400px);
+      border-radius:18px;
       border:1px solid rgba(255,255,255,.75);
       background:linear-gradient(180deg, rgba(255,255,255,.78), rgba(255,255,255,.55));
       box-shadow: 0 24px 90px rgba(122,43,98,.22);
@@ -478,35 +513,90 @@
       transform: translateY(12px) scale(.98);
       opacity:0;
       animation: modalIn .45s ease forwards;
+      position: relative;
     }
-    .gifWrap{ width:100%; background:rgba(255,255,255,.40); }
+    @media (min-width: 768px) { .modalCard { width: min(520px, 92vw); } }
+    .gifWrap{ width:100%; background:rgba(255,255,255,.40); position: relative; }
     .gifWrap img{ width:100%; display:block; }
-    .modalBody{ padding:14px 16px 18px; text-align:center; }
-    .modalTitle{
-      font-family: "Great Vibes", cursive;
-      color:rgba(122,43,98,.92);
-      font-size:26px;
-      margin:6px 0 0;
+
+    .gifStamp{
+      position:absolute;
+      right:12px;
+      bottom:12px;
+      transform: rotate(-10deg);
+      z-index: 5;
+      pointer-events:none;
+      padding:10px 12px;
+      border-radius:14px;
+      border:2px solid rgba(255,77,160,.35);
+      background: linear-gradient(180deg, rgba(255,255,255,.85), rgba(255,255,255,.55));
+      box-shadow: 0 18px 60px rgba(122,43,98,.18);
+      backdrop-filter: blur(8px);
+      text-align:center;
+      width: min(70%, 220px);
     }
-    .modalHint{ 
-      margin:8px 0 0; 
-      color:rgba(122,43,98,.70); 
-      font-size:16px; 
-      font-family: "Cormorant Garamond", Georgia, serif;
-      font-style: italic;
+    .gifStampTop{
+      display:inline-block;
+      padding:6px 10px;
+      border-radius:999px;
+      border:2px dashed rgba(255,77,160,.55);
+      font-family:"Manrope", sans-serif;
+      font-weight:900;
+      letter-spacing:.8px;
+      font-size:12px;
+      text-transform:uppercase;
+      color: rgba(122,43,98,.92);
+      background: rgba(255,255,255,.45);
+    }
+    .gifStampMid{
+      margin-top:6px;
+      font-family:"Manrope", sans-serif;
+      font-weight:900;
+      font-size:13px;
+      color: rgba(122,43,98,.92);
+    }
+    .gifStampName{
+      margin-top:2px;
+      font-family:"Manrope", sans-serif;
+      font-weight:900;
+      letter-spacing:1px;
+      font-size:12px;
+      text-transform:uppercase;
+      background: linear-gradient(135deg, #8a2d62, #ff4da0);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+    }
+
+    .modalBody{ padding:12px 14px 16px; text-align:center; }
+    .modalTitle{
+      font-family: "Manrope", sans-serif;
+      color:rgba(122,43,98,.92);
+      font-size:16px;
+      font-weight: 800;
+      margin:10px 0 0;
+      letter-spacing: .2px;
+    }
+    .modalHint{
+      margin:8px 0 0;
+      color:rgba(122,43,98,.70);
+      font-size:14px;
+      font-family: "Manrope", sans-serif;
+      font-weight: 600;
     }
     .closeBtn{
-      margin-top:12px;
+      margin-top:10px;
       width:auto;
       height:auto;
-      padding:10px 16px;
+      padding:8px 14px;
       background:rgba(255,77,160,.12);
       border:1px solid rgba(255,77,160,.18);
       color:rgba(122,43,98,.88);
-      font-weight:600;
+      font-weight:800;
       border-radius:999px;
-      font-family: "Cormorant Garamond", Georgia, serif;
-      font-size: 16px;
+      font-family: "Manrope", sans-serif;
+      font-size: 14px;
+      cursor:pointer;
     }
 
     /* sparkles */
@@ -514,12 +604,13 @@
       position:fixed;
       inset:0;
       pointer-events:none;
-      z-index:88;
+      z-index:5;
       overflow:hidden;
     }
     .sparkle{
       position:absolute;
-      font-family: "Great Vibes", "Dancing Script", cursive;
+      font-family: "Manrope", sans-serif;
+      font-weight: 800;
       color:rgba(255,77,160,.85);
       text-shadow: 0 0 16px rgba(255,77,160,.22);
       opacity:0;
@@ -553,14 +644,14 @@
       position:fixed;
       left:50%;
       top:42%;
-      transform: translate(-50%, -50%) rotate(-12deg) scale(.6);
+      transform: translate(-50%, -50%) rotate(-10deg) scale(.6);
       opacity:0;
       z-index:96;
       pointer-events:none;
-      width:min(360px, 85vw);
+      width:min(85vw, 320px);
       text-align:center;
-      padding:22px 18px;
-      border-radius:22px;
+      padding:18px 14px;
+      border-radius:18px;
       border:2px solid rgba(255,77,160,.30);
       background:linear-gradient(180deg, rgba(255,255,255,.78), rgba(255,255,255,.55));
       box-shadow: 0 30px 120px rgba(122,43,98,.20);
@@ -568,52 +659,55 @@
     }
     .stampRing{
       display:inline-block;
-      padding:10px 18px;
+      padding:8px 14px;
       border-radius:999px;
       border:2px dashed rgba(255,77,160,.55);
       color: rgba(122,43,98,.92);
-      font-family: "Dancing Script", cursive;
-      font-weight:600;
-      letter-spacing: 1.2px;
-      font-size: 22px;
-      text-shadow: 0 0 14px rgba(255,77,160,.18);
+      font-family: "Manrope", sans-serif;
+      font-weight:900;
+      letter-spacing: 1px;
+      font-size: 14px;
+      text-transform: uppercase;
     }
     .stampName{
-      margin-top:12px;
-      font-family: "Great Vibes", cursive;
-      font-weight:400;
-      letter-spacing: 2.4px;
-      font-size: clamp(28px, 3.2vw, 38px);
+      margin-top:10px;
+      font-family: "Dancing Script", cursive;
+      font-weight: 700;
+      letter-spacing: 1px;
+      font-size: clamp(22px, 5vw, 32px);
       background: linear-gradient(135deg, #8a2d62, #ff4da0);
       -webkit-background-clip:text;
       background-clip:text;
       color:transparent;
     }
     .stampSub{
-      margin-top:8px;
-      font-family: "Cormorant Garamond", Georgia, serif;
+      margin-top:6px;
+      font-family: "Manrope", sans-serif;
       color: rgba(122,43,98,.70);
-      font-weight:600;
-      letter-spacing:.3px;
-      font-style: italic;
+      font-weight:700;
+      letter-spacing:.2px;
     }
     .stampSlam{ animation: slam 1.2s cubic-bezier(.15,.95,.25,1) both; }
     @keyframes slam{
-      0%{ opacity:0; transform: translate(-50%, -50%) rotate(-18deg) scale(.4); filter: blur(2px); }
-      35%{ opacity:1; transform: translate(-50%, -50%) rotate(-12deg) scale(1.18); filter: blur(0); }
-      55%{ transform: translate(-50%, -50%) rotate(-12deg) scale(.98); }
-      100%{ opacity:1; transform: translate(-50%, -50%) rotate(-12deg) scale(1); }
+      0%{ opacity:0; transform: translate(-50%, -50%) rotate(-16deg) scale(.4); filter: blur(2px); }
+      35%{ opacity:1; transform: translate(-50%, -50%) rotate(-10deg) scale(1.18); filter: blur(0); }
+      55%{ transform: translate(-50%, -50%) rotate(-10deg) scale(.98); }
+      100%{ opacity:1; transform: translate(-50%, -50%) rotate(-10deg) scale(1); }
     }
     .stampOut{ animation: stampOut 1.4s ease both; }
-    @keyframes stampOut{ to{ opacity:0; transform: translate(-50%, -52%) rotate(-12deg) scale(.98); } }
+    @keyframes stampOut{ to{ opacity:0; transform: translate(-50%, -52%) rotate(-10deg) scale(.98); } }
 
     /* fireworks canvas */
-    canvas#fx{ position:fixed; inset:0; pointer-events:none; z-index:85; }
+    canvas#fx{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index:4;
+    }
 
-    /* dust puff */
     .dust{
       position:absolute;
-      width:14px; height:14px;
+      width:12px; height:12px;
       border-radius:999px;
       background: rgba(255,255,255,.65);
       box-shadow: 0 0 18px rgba(255,255,255,.35);
@@ -621,10 +715,9 @@
       filter: blur(.2px);
     }
 
-    /* shattered piece */
     .shattered-piece {
       position: absolute;
-      background: linear-gradient(135deg, 
+      background: linear-gradient(135deg,
         rgba(255, 255, 255, 0.85),
         rgba(248, 248, 255, 0.78),
         rgba(255, 255, 255, 0.85));
@@ -634,14 +727,33 @@
       z-index: 4;
       display: grid;
       place-items: center;
-      font-family: "Cormorant Garamond", Georgia, serif;
-      font-weight: 600;
-      font-size: 12px;
+      font-family: "Manrope", sans-serif;
+      font-weight: 800;
+      font-size: 10px;
       color: rgba(122,43,98,.90);
       transform-origin: center;
-      box-shadow: 
+      box-shadow:
         0 4px 12px rgba(122,43,98,.15),
         inset 0 0 0 1px rgba(255, 255, 255, 0.3);
+    }
+
+    .numo-celebration {
+      position: fixed;
+      font-family: "Manrope", sans-serif;
+      font-weight: 900;
+      letter-spacing: .6px;
+      color: rgba(255, 77, 160, 0.9);
+      text-shadow: 0 0 20px rgba(255, 77, 160, 0.35);
+      pointer-events: none;
+      z-index: 3;
+      opacity: 0;
+      animation: numoFloat linear forwards;
+      white-space: nowrap;
+    }
+    @keyframes numoFloat {
+      0% { transform: translateY(100vh) translateX(0) rotate(0deg) scale(0.9); opacity: 0; }
+      10% { opacity: 0.9; }
+      100% { transform: translateY(-100px) translateX(var(--tx)) rotate(var(--rot)) scale(1.08); opacity: 0; }
     }
 
     @keyframes fadeUp{ from{ opacity:0; transform: translateY(10px);} to{ opacity:1; transform: translateY(0);} }
@@ -651,35 +763,6 @@
       60%{ transform: translateY(-2px) scale(1.02); opacity:1; filter: blur(0); }
       100%{ transform: translateY(0) scale(1); }
     }
-    
-    /* Glass crack animations */
-    @keyframes crackAppear {
-      0% { transform: scale(0.1); opacity: 0; }
-      70% { transform: scale(1.1); opacity: 0.8; }
-      100% { transform: scale(1); opacity: 1; }
-    }
-    
-    @keyframes crackThrob {
-      0%, 100% { opacity: 0.7; }
-      50% { opacity: 0.9; }
-    }
-    
-    /* Shatter animation */
-    @keyframes shatterPiece {
-      0% {
-        transform: translate(0, 0) rotate(0deg) scale(1);
-        opacity: 1;
-      }
-      100% {
-        transform: translate(var(--tx), var(--ty)) rotate(var(--rot)) scale(0.8);
-        opacity: 0;
-      }
-    }
-    
-    @keyframes glassShimmer {
-      0% { background-position: -100px 0; }
-      100% { background-position: 100px 0; }
-    }
   </style>
 </head>
 
@@ -687,41 +770,33 @@
   <div id="bgFloat" aria-hidden="true"></div>
   <canvas id="fx"></canvas>
 
-  <!-- Sounds - Added glass cracking sounds -->
-  <audio id="bgMusic" preload="auto" loop>
-    <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_8c2e2fe0f7.mp3?filename=romantic-piano-112191.mp3" type="audio/mpeg">
-  </audio>
-  <audio id="noClickSfx" preload="auto">
-    <source src="https://cdn.pixabay.com/download/audio/2022/03/10/audio_3b0d0d5b8f.mp3?filename=click-124467.mp3" type="audio/mpeg">
-  </audio>
-  <audio id="crackSfx" preload="auto">
-    <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_4c0e10f63a.mp3?filename=glass-break-140997.mp3" type="audio/mpeg">
-  </audio>
-  <audio id="applauseSfx" preload="auto">
-    <source src="https://cdn.pixabay.com/download/audio/2022/03/09/audio_2dce0c1d89.mp3?filename=applause-124467.mp3" type="audio/mpeg">
-  </audio>
-  <audio id="glassCrackSfx" preload="auto">
-    <source src="https://cdn.pixabay.com/download/audio/2021/10/31/audio_0b5466c5a3.mp3?filename=glass-cracking-6391.mp3" type="audio/mpeg">
-  </audio>
+  <div id="lyricLayer" aria-hidden="true"></div>
 
   <div id="sparkleLayer" aria-hidden="true"></div>
   <div id="flash" aria-hidden="true"></div>
 
+  <!-- stamp -->
   <div id="stamp" aria-hidden="true">
     <div class="stampRing">Approved</div>
-    <div class="stampName">By&nbsp;Numo</div>
-    <div class="stampSub">💖 Chance Granted 💖</div>
+    <div class="stampName">By Numo</div>
+    <div class="stampSub">✅ Chance Granted ✅</div>
   </div>
 
-  <!-- Funny celebration gif modal -->
+  <!-- Celebration modal -->
   <div class="modal" id="gifModal" role="dialog" aria-modal="true" aria-label="Celebration">
     <div class="modalCard">
       <div class="gifWrap">
         <img alt="Celebration GIF" src="https://media.giphy.com/media/26ufdipQqU2lhNA4g/giphy.gif">
+        <div class="gifStamp" aria-hidden="true">
+          <div class="gifStampTop">CHANCE GRANTED</div>
+          <div class="gifStampMid">APPROVED</div>
+          <div class="gifStampName">BY NUMO</div>
+        </div>
       </div>
+
       <div class="modalBody">
-        <div class="modalTitle">Historic Moment Unlocked</div>
-        <div class="modalHint">Numo has granted a chance. The universe is healing. Witnesses present. 🥹</div>
+        <div class="modalTitle">Okay… deal 😌</div>
+        <div class="modalHint">Thank you for the chance. I won't disappoint you.</div>
         <button class="closeBtn" id="closeModalBtn" type="button">Close</button>
       </div>
     </div>
@@ -732,8 +807,10 @@
       <div class="badge">Numo • A Special Request</div>
     </div>
 
-    <h1>Numo, do you think i deserve a chance</h1>
-        <div class="stage">
+    <h1>Numo... do you think I deserve a chance?</h1>
+    <div class="hint">Be honest… don’t overthink it 👀</div>
+
+    <div class="stage">
       <div class="playArea" id="playArea">
         <div class="btnRow" id="btnRow">
           <button class="yes" id="yesBtn" type="button">Yes</button>
@@ -747,20 +824,23 @@
   </div>
 
   <script>
-    // NO click messages (Capital first letter)
+    // ✅ Updated NO messages (your exact list)
     const noMessages = [
-      "Are you sure",
-      "You are not this cruel",
-      "I know you dont want to do this",
-      "Do you want to reconsider my heart is pleading",
-      "This is not you I dont think you mean that",
-      "Your heart is kinder than this",
-      "You are breaking my fragile heart",
-      "One more chance to decide."
+      "Hmm… you sure? 😌",
+      "Don't act tough Numo 😂",
+      "Don’t make me beggg 😭",
+      "You’re really testing me 😅",
+      "Don't you have heart 😔",
+      "This is bullying (to me) 😂",
+      "Alright… I’m serious about this 👀",
+      "Last tease… promise 😌",
+      "Okay. Real answer time."
     ];
 
-    const yesMessage = "Thank you Numo, I knew you would give me a chance. You just made my day.";
-    const endNoMessage = "Now there's only one beautiful option left ✨";
+    // ✅ Updated YES message (and modal hint)
+    const yesMessage = "Thank you for the chance. I’ll prove it with actions, not words.";
+    const endNoMessage = "Alright… only one option left 😌";
+    const yesTexts = ["Yes", "Yes 😌", "YES 😳", "Okay yes 😂", "Fine YES 😤"];
 
     const card = document.getElementById("card");
     const bgFloat = document.getElementById("bgFloat");
@@ -773,20 +853,123 @@
     const gifModal = document.getElementById("gifModal");
     const closeModalBtn = document.getElementById("closeModalBtn");
 
-    const bgMusic = document.getElementById("bgMusic");
-    const noClickSfx = document.getElementById("noClickSfx");
-    const crackSfx = document.getElementById("crackSfx");
-    const applauseSfx = document.getElementById("applauseSfx");
-    const glassCrackSfx = document.getElementById("glassCrackSfx");
     const sparkleLayer = document.getElementById("sparkleLayer");
     const flash = document.getElementById("flash");
     const stamp = document.getElementById("stamp");
 
-    /* Floating background */
+    let celebrationActive = false;
+    let fireworksInterval;
+    let sparkleInterval;
+    let numoTextInterval;
+
+    // ===== Floating lyrics (many, side-only, avoids center) =====
+    const lyricLayer = document.getElementById("lyricLayer");
+    const lyricTexts = [
+  "All I dream of is your eyes",
+  "You can say that I'm a fool"
+];
+
+
+    let lyricInterval;
+    let lyricActive = true;
+
+    function getSafeZone(){
+      const r = card.getBoundingClientRect();
+      const padX = 90; // wider "no overlap" area
+      const padY = 90;
+      return {
+        left: r.left - padX,
+        right: r.right + padX,
+        top: r.top - padY,
+        bottom: r.bottom + padY
+      };
+    }
+
+    function pickSidePosition(){
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      const safe = getSafeZone();
+
+      // side bands (left 22% and right 22%)
+      const leftBandMax = Math.max(140, w * 0.22);
+      const rightBandMin = Math.min(w - 140, w * 0.78);
+
+      const useLeft = Math.random() < 0.5;
+
+      let x = useLeft
+        ? Math.random() * leftBandMax
+        : rightBandMin + Math.random() * (w - rightBandMin);
+
+      let y = h + 40 + Math.random() * 140;
+
+      // force away from safe zone (extra protection)
+      if(x > safe.left && x < safe.right){
+        x = (x < w/2) ? safe.left - 80 : safe.right + 80;
+      }
+
+      return { x, y };
+    }
+
+    function spawnLyric(){
+      if(!lyricActive) return;
+
+      const el = document.createElement("div");
+      el.className = "lyricFloat";
+      el.textContent = lyricTexts[Math.floor(Math.random() * lyricTexts.length)];
+
+
+      const { x, y } = pickSidePosition();
+
+      const size = 13 + Math.random() * 10;        // 13–23px
+      const dur  = 6000 + Math.random() * 5200;     // 6–11s
+      const op   = 0.30 + Math.random() * 0.18;     // ✅ readable transparency
+      const rot  = (Math.random() * 10 - 5).toFixed(1) + "deg";
+      const sc   = (0.92 + Math.random() * 0.22).toFixed(2);
+      const dx   = (Math.random() * 90 - 45).toFixed(0) + "px";
+
+      el.style.left = x + "px";
+      el.style.top  = y + "px";
+      el.style.fontSize = size + "px";
+      el.style.animationDuration = dur + "ms";
+
+      el.style.setProperty("--op", op.toFixed(2));
+      el.style.setProperty("--rot", rot);
+      el.style.setProperty("--sc", sc);
+      el.style.setProperty("--dx", dx);
+
+      lyricLayer.appendChild(el);
+      setTimeout(() => { if(el.parentNode) el.remove(); }, dur + 300);
+    }
+
+    function startLyrics(){
+      lyricActive = true;
+      // small burst initially
+      for(let i=0;i<12;i++){
+        setTimeout(spawnLyric, i * 140);
+      }
+      // spawn rate (lower = more dense)
+      lyricInterval = setInterval(spawnLyric, 260);
+    }
+
+    function stopLyrics(){
+      lyricActive = false;
+      clearInterval(lyricInterval);
+
+      const els = lyricLayer.querySelectorAll(".lyricFloat");
+      els.forEach((el) => {
+        el.animate(
+          [{ opacity: getComputedStyle(el).opacity }, { opacity: 0 }],
+          { duration: 450, easing: "ease-out", fill: "forwards" }
+        );
+        setTimeout(() => { if(el.parentNode) el.remove(); }, 520);
+      });
+    }
+
+    // Floating icons
     function spawnFloat(){
       const el = document.createElement("div");
       el.className = "floatItem";
-      const items = ["✦", "♡", "❀", "✧", "♥", "💕", "🌸", "💖"];
+      const items = ["✦", "✨", "❀", "✧", "♡", "🌸"];
       el.textContent = items[Math.floor(Math.random()*items.length)];
       el.style.left = (Math.random() * 100) + "vw";
       el.style.fontSize = (12 + Math.random()*22) + "px";
@@ -797,34 +980,7 @@
     }
     setInterval(spawnFloat, 450);
 
-    /* Start music after first gesture */
-    let musicArmed = false;
-    function armMusicOnce(){
-      if(musicArmed) return;
-      musicArmed = true;
-      bgMusic.volume = 0.55;
-      bgMusic.play().catch(()=>{});
-    }
-    window.addEventListener("pointerdown", armMusicOnce, { once:true });
-
-    function playNoSfx(){
-      try{ noClickSfx.currentTime = 0; noClickSfx.volume = 0.8; noClickSfx.play(); }catch(e){}
-    }
-    function playCrack(){
-      try{ crackSfx.currentTime = 0; crackSfx.volume = 0.95; crackSfx.play(); }catch(e){}
-    }
-    function playGlassCrack(){
-      try{ 
-        glassCrackSfx.currentTime = 0; 
-        glassCrackSfx.volume = 0.6; 
-        glassCrackSfx.play(); 
-      }catch(e){}
-    }
-    function playApplause(){
-      try{ applauseSfx.currentTime = 0; applauseSfx.volume = 0.9; applauseSfx.play(); }catch(e){}
-    }
-
-    /* YES growth */
+    // YES growth
     let yesScale = 1;
     let yesGlow = 0.30;
     function setYesVisuals(){
@@ -835,21 +991,21 @@
     setYesVisuals();
 
     function growYes(){
-      yesScale = Math.min(1.95, yesScale * 1.16);
-      yesGlow  = Math.min(0.98, yesGlow + 0.08);
+      yesScale = Math.min(2.5, yesScale * 1.22);
+      yesGlow  = Math.min(0.98, yesGlow + 0.12);
       setYesVisuals();
 
       yesBtn.animate(
         [
           { transform: `scale(${yesScale * 0.97})` },
-          { transform: `scale(${yesScale * 1.05})` },
+          { transform: `scale(${yesScale * 1.08})` },
           { transform: `scale(${yesScale})` }
         ],
-        { duration: 260, easing: "cubic-bezier(.2,.9,.2,1)" }
+        { duration: 220, easing: "cubic-bezier(.2,.9,.2,1)" }
       );
     }
 
-    /* Magnet on desktop hover */
+    // Hover pull on YES
     yesBtn.addEventListener("mousemove", (e) => {
       const r = yesBtn.getBoundingClientRect();
       const dx = (e.clientX - (r.left + r.width/2)) / (r.width/2);
@@ -861,14 +1017,18 @@
       yesBtn.style.transform = `scale(${yesScale})`;
     });
 
-    /* Sparkles */
+    // Sparkles
     function spawnSparkles(durationMs = 5500){
       const start = Date.now();
-      const words = ["Numo ✨", "Numo 💗", "Numo 🌸", "Numo 💖", "Numo 💕"];
-      const sizes = [16, 18, 20, 22, 24];
+      const words = ["Numo ✨", "Numo ✦"];
+      const sizes = [14, 16, 18, 20, 22];
 
       const timer = setInterval(() => {
-        if(Date.now() - start > durationMs){ clearInterval(timer); return; }
+        if(!celebrationActive && Date.now() - start > durationMs){
+          clearInterval(timer);
+          return;
+        }
+
         const el = document.createElement("div");
         el.className = "sparkle";
         el.textContent = words[Math.floor(Math.random()*words.length)];
@@ -879,9 +1039,32 @@
         el.style.animationDuration = travelTime + "ms";
         sparkleLayer.appendChild(el);
         setTimeout(() => el.remove(), travelTime + 300);
-      }, 120);
+      }, celebrationActive ? 90 : 120);
     }
 
+    function spawnNumoText() {
+      if (!celebrationActive) return;
+      const numoText = document.createElement("div");
+      numoText.className = "numo-celebration";
+
+      const texts = ["NUMO", "Numo 😌", "Numo ✨", "Numo 👀"];
+      numoText.textContent = texts[Math.floor(Math.random()*texts.length)];
+
+      const size = 18 + Math.random() * 22;
+      numoText.style.fontSize = `${size}px`;
+      numoText.style.left = (Math.random() * (window.innerWidth - 100)) + "px";
+      numoText.style.top = (window.innerHeight + 50) + "px";
+
+      const travelTime = 3000 + Math.random() * 4000;
+      numoText.style.animationDuration = travelTime + "ms";
+      numoText.style.setProperty('--tx', `${(Math.random() * 200 - 100)}px`);
+      numoText.style.setProperty('--rot', `${(Math.random() * 30 - 15)}deg`);
+
+      document.body.appendChild(numoText);
+      setTimeout(() => { if (numoText.parentNode) numoText.remove(); }, travelTime + 500);
+    }
+
+    // Flash + stamp
     function flashScreen(){
       flash.classList.remove("flashOn");
       void flash.offsetWidth;
@@ -893,22 +1076,23 @@
       void stamp.offsetWidth;
       stamp.classList.add("stampSlam");
 
-      const stayMs = 6200;
+      const stayMs = 4200;
       setTimeout(() => {
         stamp.classList.remove("stampSlam");
         stamp.classList.add("stampOut");
       }, stayMs);
     }
 
-    /* Modal */
+    // Modal
     function showGifModal(){ gifModal.style.display = "grid"; }
     function hideGifModal(){ gifModal.style.display = "none"; }
     closeModalBtn.addEventListener("click", hideGifModal);
     gifModal.addEventListener("click", (e) => { if(e.target === gifModal) hideGifModal(); });
 
-    /* Fireworks canvas */
+    // Fireworks canvas
     const canvas = document.getElementById("fx");
     const ctx = canvas.getContext("2d");
+
     function resizeCanvas(){
       const dpr = window.devicePixelRatio || 1;
       canvas.width = window.innerWidth * dpr;
@@ -952,8 +1136,10 @@
         });
       }
     }
+
     function draw(){
-      if(!running) return;
+      if(!running && particles.length === 0) return;
+
       ctx.clearRect(0,0,window.innerWidth, window.innerHeight);
       particles = particles.filter(p => p.life > 0);
 
@@ -982,9 +1168,8 @@
         ctx.fill();
       }
 
-      if(particles.length === 0){
+      if(particles.length === 0 && !celebrationActive){
         running = false;
-        ctx.clearRect(0,0,window.innerWidth, window.innerHeight);
         return;
       }
       requestAnimationFrame(draw);
@@ -1000,26 +1185,53 @@
       burst(cx, cy - 110, 130);
       sparkleRain(220);
 
-      setTimeout(() => burst(cx - 90, cy - 230, 100), 220);
-      setTimeout(() => burst(cx + 70, cy - 240, 100), 380);
-      setTimeout(() => sparkleRain(160), 520);
-
       requestAnimationFrame(draw);
     }
-
     function extraFireworksWaves(){
       const cx = window.innerWidth/2;
       const cy = window.innerHeight/2;
-      setTimeout(() => burst(cx - 260, cy - 120, 120), 650);
-      setTimeout(() => burst(cx + 260, cy - 140, 120), 820);
-      setTimeout(() => burst(cx, cy - 260, 140), 1050);
-      setTimeout(() => sparkleRain(220), 1150);
+      setTimeout(() => burst(cx - 260, cy - 120, 120), 220);
+      setTimeout(() => burst(cx + 260, cy - 140, 120), 380);
+      setTimeout(() => burst(cx, cy - 260, 140), 520);
+      setTimeout(() => sparkleRain(160), 650);
     }
 
-    /* NO behavior - REALISTIC GLASS CRACKING */
+    function startContinuousCelebration() {
+      celebrationActive = true;
+
+      fireworksInterval = setInterval(() => {
+        if (!celebrationActive) return;
+        const x = 100 + Math.random() * (window.innerWidth - 200);
+        const y = 100 + Math.random() * (window.innerHeight - 200);
+        burst(x, y, 80 + Math.random() * 70);
+      }, 850);
+
+      sparkleInterval = setInterval(() => {
+        if (!celebrationActive) return;
+        sparkleRain(60 + Math.random() * 40);
+      }, 1500);
+
+      numoTextInterval = setInterval(() => {
+        if (!celebrationActive) return;
+        spawnNumoText();
+      }, 650);
+
+      spawnSparkles(999999999);
+      running = true;
+      requestAnimationFrame(draw);
+    }
+
+    function stopContinuousCelebration() {
+      celebrationActive = false;
+      clearInterval(fireworksInterval);
+      clearInterval(sparkleInterval);
+      clearInterval(numoTextInterval);
+    }
+
+    // NO button cracking + moving + shatter
     let noCount = 0;
     let noIsAbsolute = false;
-    let crackLevels = [0, 0, 0, 0, 0, 0]; // Track individual crack progress
+    let crackLevels = [0, 0, 0, 0, 0, 0];
 
     function shakeNo(){
       noBtn.animate(
@@ -1035,22 +1247,15 @@
       );
     }
 
-    // Function to update glass cracks based on click count
     function updateGlassCracks() {
-      // Calculate crack progress based on click count
-      const baseProgress = noCount / 8;
-      
-      // Update individual crack lines with staggered progression
+      const baseProgress = noCount / 9;
+
       crackLevels = crackLevels.map((level, i) => {
-        // Each crack starts appearing at different thresholds
         const startThreshold = i * 0.1;
-        if (baseProgress > startThreshold) {
-          return Math.min(1, (baseProgress - startThreshold) * 1.5);
-        }
+        if (baseProgress > startThreshold) return Math.min(1, (baseProgress - startThreshold) * 1.5);
         return 0;
       });
-      
-      // Set CSS variables for cracks
+
       noBtn.style.setProperty('--crack-opacity', Math.min(0.95, baseProgress * 1.2).toFixed(2));
       noBtn.style.setProperty('--crack-1', `${crackLevels[0] * 15}px`);
       noBtn.style.setProperty('--crack-2', `${crackLevels[1] * 20}px`);
@@ -1058,25 +1263,20 @@
       noBtn.style.setProperty('--crack-4', `${crackLevels[3] * 12}px`);
       noBtn.style.setProperty('--crack-5', `${crackLevels[4] * 10}px`);
       noBtn.style.setProperty('--crack-6', `${crackLevels[5] * 8}px`);
-      
-      // Add glass distortion/blur effect as cracks worsen
       noBtn.style.setProperty('--glass-blur', `${baseProgress * 0.8}px`);
-      
-      // Button becomes more fragile looking
       noBtn.style.opacity = Math.max(0.7, 1 - (baseProgress * 0.3)).toFixed(2);
     }
 
-    // Create visual crack pieces on button surface
     function createCrackPiece(xPercent, yPercent, size, angle) {
       const piece = document.createElement("div");
       piece.className = "crack-piece";
-      
+
       const btnRect = noBtn.getBoundingClientRect();
       const areaRect = playArea.getBoundingClientRect();
-      
+
       const x = (btnRect.left - areaRect.left) + (xPercent * btnRect.width);
       const y = (btnRect.top - areaRect.top) + (yPercent * btnRect.height);
-      
+
       piece.style.width = `${size}px`;
       piece.style.height = `${size}px`;
       piece.style.left = `${x}px`;
@@ -1084,10 +1284,9 @@
       piece.style.borderWidth = `${0.5 + Math.random() * 1}px`;
       piece.style.transform = `rotate(${angle}deg)`;
       piece.style.opacity = '0';
-      
+
       playArea.appendChild(piece);
-      
-      // Animate crack piece appearing
+
       piece.animate(
         [
           { transform: `rotate(${angle}deg) scale(0.1)`, opacity: 0 },
@@ -1096,7 +1295,7 @@
         ],
         { duration: 400, easing: "cubic-bezier(0.2,0.9,0.2,1)", fill: "forwards" }
       );
-      
+
       return piece;
     }
 
@@ -1111,7 +1310,7 @@
       noBtn.style.position = "absolute";
       noBtn.style.left = `${x0}px`;
       noBtn.style.top  = `${y0}px`;
-      noBtn.style.zIndex = "3";
+      noBtn.style.zIndex = "12";
       noIsAbsolute = true;
     }
 
@@ -1130,7 +1329,7 @@
       noBtn.style.top  = `${y}px`;
     }
 
-    function dustPuff(x, y, count = 25){
+    function dustPuff(x, y, count = 30){
       for(let i=0;i<count;i++){
         const d = document.createElement("div");
         d.className = "dust";
@@ -1151,20 +1350,14 @@
       }
     }
 
-    // REALISTIC GLASS SHATTERING EFFECT
     function shatterNo(){
-      playCrack();
-      playGlassCrack();
-
       const areaRect = playArea.getBoundingClientRect();
       const r = noBtn.getBoundingClientRect();
       const x = r.left - areaRect.left;
       const y = r.top  - areaRect.top;
 
-      // Intense dust puff at shatter point
-      dustPuff(x + r.width/2, y + r.height/2, 35);
+      dustPuff(x + r.width/2, y + r.height/2, 40);
 
-      // Hide the original button with cracking animation
       noBtn.animate(
         [
           { transform: 'scale(1)', opacity: 1 },
@@ -1174,190 +1367,55 @@
         ],
         { duration: 300, easing: "cubic-bezier(0.2,0.9,0.2,1)", fill: "forwards" }
       );
-      
-      setTimeout(()=>{ 
-        noBtn.style.display = "none"; 
-        
-        // Fade out the last message when No button disappears
-        setTimeout(() => {
-          msg.style.opacity = "0";
-          setTimeout(() => {
-            msg.textContent = "";
-            msg.style.opacity = "1";
-          }, 500);
-        }, 300);
-      }, 300);
 
-      // Create realistic glass shards
-      const pieceCount = 42; // More pieces for glass-like shattering
-      const colors = [
-        'rgba(255, 255, 255, 0.85)',
-        'rgba(248, 248, 255, 0.78)',
-        'rgba(255, 255, 255, 0.90)',
-        'rgba(240, 240, 255, 0.82)'
-      ];
+      setTimeout(()=>{ noBtn.style.display = "none"; }, 300);
 
-      // Create central fracture lines first
-      for(let i = 0; i < 6; i++){
-        setTimeout(() => {
-          const crack = document.createElement("div");
-          crack.style.position = "absolute";
-          crack.style.width = `${2 + Math.random() * 3}px`;
-          crack.style.height = `${40 + Math.random() * 30}px`;
-          crack.style.background = `linear-gradient(to bottom, 
-            rgba(122, 43, 98, 0.6), 
-            rgba(122, 43, 98, 0.4), 
-            rgba(122, 43, 98, 0.6))`;
-          crack.style.left = `${x + r.width/2 - 1}px`;
-          crack.style.top = `${y + r.height/2 - 20}px`;
-          crack.style.transform = `rotate(${i * 60 + Math.random() * 20}deg)`;
-          crack.style.transformOrigin = "center center";
-          crack.style.opacity = "0.8";
-          playArea.appendChild(crack);
-          
-          crack.animate(
-            [
-              { transform: `rotate(${i * 60 + Math.random() * 20}deg) scale(0.1)`, opacity: 0 },
-              { transform: `rotate(${i * 60 + Math.random() * 20}deg) scale(1.2)`, opacity: 0.9 },
-              { transform: `rotate(${i * 60 + Math.random() * 20}deg) scale(1)`, opacity: 0.7 }
-            ],
-            { duration: 200, easing: "ease-out", fill: "forwards" }
-          );
-          
-          setTimeout(() => crack.remove(), 400);
-        }, i * 30);
-      }
-
-      // Create glass shards
+      const pieceCount = 40;
       for(let i = 0; i < pieceCount; i++){
         const piece = document.createElement("div");
         piece.className = "shattered-piece";
-        
-        // Glass-like shard shapes (more angular)
-        const width = 8 + Math.random() * 20;
-        const height = 8 + Math.random() * 20;
-        
-        // Random starting position within button bounds
+
+        const width = 6 + Math.random() * 24;
+        const height = 6 + Math.random() * 24;
+
         const pieceX = x + Math.random() * r.width;
         const pieceY = y + Math.random() * r.height;
-        
+
         piece.style.width = `${width}px`;
         piece.style.height = `${height}px`;
         piece.style.left = `${pieceX}px`;
         piece.style.top = `${pieceY}px`;
-        piece.style.background = colors[Math.floor(Math.random() * colors.length)];
-        piece.style.borderRadius = `${Math.random() * 3}px`; // Less rounded for glass
-        piece.style.border = `1px solid rgba(255, 255, 255, ${0.3 + Math.random() * 0.3})`;
-        
-        // Add glass-like shine to some pieces
-        if(Math.random() > 0.5){
-          piece.style.background = `linear-gradient(135deg, 
-            ${colors[Math.floor(Math.random() * colors.length)]},
-            rgba(255, 255, 255, 0.95),
-            ${colors[Math.floor(Math.random() * colors.length)]})`;
-        }
-        
-        // Some pieces show "No" text fragments
-        if(Math.random() > 0.8){
-          const fragments = ["N", "o", "No", ""];
-          piece.textContent = fragments[Math.floor(Math.random() * fragments.length)];
-          piece.style.fontSize = `${6 + Math.random() * 8}px`;
-          piece.style.color = `rgba(122, 43, 98, ${0.7 + Math.random() * 0.3})`;
-        }
-        
+
         playArea.appendChild(piece);
 
-        // Realistic glass shard physics
         const angle = Math.random() * Math.PI * 2;
-        const force = 1.5 + Math.random() * 3.5;
-        const tx = Math.cos(angle) * (60 + Math.random() * 100);
-        const ty = Math.sin(angle) * (40 + Math.random() * 80) + 40; // Gravity effect
-        
-        // Staggered animation for more realistic explosion
+        const tx = Math.cos(angle) * (70 + Math.random() * 110);
+        const ty = Math.sin(angle) * (50 + Math.random() * 90) + 45;
+
         setTimeout(() => {
           piece.animate(
             [
-              { 
-                transform: 'translate(0, 0) rotate(0deg) scale(1)', 
-                opacity: 1,
-                filter: 'brightness(1) blur(0px)'
-              },
-              { 
-                transform: `translate(${tx}px, ${ty}px) rotate(${Math.random() * 720 - 360}deg) scale(${0.3 + Math.random() * 0.4})`, 
-                opacity: 0,
-                filter: 'brightness(1.2) blur(1px)'
-              }
+              { transform: 'translate(0, 0) rotate(0deg) scale(1)', opacity: 1 },
+              { transform: `translate(${tx}px, ${ty}px) rotate(${Math.random() * 720 - 360}deg) scale(${0.2 + Math.random() * 0.3})`, opacity: 0 }
             ],
-            { 
-              duration: 900 + Math.random() * 600,
-              easing: 'cubic-bezier(0.1, 0.8, 0.2, 1)',
-              fill: 'forwards' 
-            }
+            { duration: 950 + Math.random() * 700, easing: 'cubic-bezier(0.1, 0.8, 0.2, 1)', fill: 'forwards' }
           );
-          
-          // Remove piece after animation
-          setTimeout(() => {
-            if(piece.parentNode) {
-              piece.remove();
-            }
-          }, 1500);
-        }, i * 25); // Staggered start for realistic explosion
-      }
-
-      // Add glass dust/micro-shards
-      for(let i = 0; i < 25; i++){
-        setTimeout(() => {
-          const micro = document.createElement("div");
-          micro.style.position = "absolute";
-          micro.style.width = `${1 + Math.random() * 3}px`;
-          micro.style.height = `${1 + Math.random() * 3}px`;
-          micro.style.borderRadius = "50%";
-          micro.style.background = `rgba(255, 255, 255, ${0.8 + Math.random() * 0.2})`;
-          micro.style.left = `${x + r.width/2}px`;
-          micro.style.top = `${y + r.height/2}px`;
-          micro.style.boxShadow = "0 0 8px rgba(255,255,255,0.9)";
-          playArea.appendChild(micro);
-          
-          const mAngle = Math.random() * Math.PI * 2;
-          const mDist = 20 + Math.random() * 80;
-          
-          micro.animate(
-            [
-              { transform: 'translate(0,0) scale(1)', opacity: 1 },
-              { transform: `translate(${Math.cos(mAngle) * mDist}px, ${Math.sin(mAngle) * mDist}px) scale(0)`, opacity: 0 }
-            ],
-            { duration: 500 + Math.random() * 400, easing: 'ease-out', fill: 'forwards' }
-          );
-          
-          setTimeout(() => micro.remove(), 900);
-        }, i * 40);
+          setTimeout(() => { if(piece.parentNode) piece.remove(); }, 1700);
+        }, i * 16);
       }
     }
 
-    /* NO click with progressive glass cracking */
     noBtn.addEventListener("click", () => {
       if(noBtn.style.display === "none") return;
 
-      armMusicOnce();
-      playNoSfx();
-      
-      // Play glass crack sound on later clicks
-      if(noCount >= 2) {
-        playGlassCrack();
-      }
-
       noCount += 1;
-      if(noCount > 8) return;
+      if(noCount > 9) return;
 
       msg.textContent = noMessages[noCount - 1];
 
-      // Visual shake with cracking effect
       shakeNo();
-      
-      // Update glass cracks
       updateGlassCracks();
-      
-      // Add small crack pieces on surface for clicks 3-7
+
       if(noCount >= 3 && noCount <= 7) {
         for(let i = 0; i < 2 + noCount; i++) {
           setTimeout(() => {
@@ -1367,69 +1425,62 @@
               3 + Math.random() * 8,
               Math.random() * 360
             );
-            // Remove after animation
-            setTimeout(() => {
-              if(piece.parentNode) piece.remove();
-            }, 1500);
+            setTimeout(() => { if(piece.parentNode) piece.remove(); }, 1500);
           }, i * 100);
         }
       }
 
       setTimeout(() => {
         growYes();
+        yesBtn.textContent = yesTexts[Math.min(noCount, yesTexts.length - 1)];
         ensureNoAbsolute();
         moveNoButton();
 
-        if(noCount === 8){
+        if(noCount === 9){
           setTimeout(() => {
             shatterNo();
-            setTimeout(() => { 
-              final.textContent = endNoMessage; 
-              
-              // When only Yes button is left, fade out the last message after 3 seconds
-              setTimeout(() => {
-                final.style.opacity = "0";
-                setTimeout(() => {
-                  final.textContent = "";
-                  final.style.opacity = "1";
-                }, 500);
-              }, 3000);
-            }, 520);
+            setTimeout(() => { final.textContent = endNoMessage; }, 520);
           }, 320);
         }
       }, 160);
     });
 
-    /* YES click */
     yesBtn.addEventListener("click", () => {
-      armMusicOnce();
-      playApplause();
+      stopLyrics(); // ✅ stop the side-floating lyrics when YES is pressed
+
+      startContinuousCelebration();
 
       card.classList.add("zoom");
       noBtn.style.display = "none";
-      final.textContent = "";
 
-      // Clear any remaining message when Yes is clicked
       msg.style.opacity = "0";
       setTimeout(() => {
         msg.textContent = yesMessage;
         msg.style.opacity = "1";
         msg.classList.add("dramatic", "legendaryYes");
-      }, 300);
+      }, 250);
 
-      final.innerHTML = `<div class="toBe">— To Be Continued… 🎬 —</div>`;
+      final.innerHTML = `
+        <div style="margin-top:8px;"></div>
+        <button class="replayBtn" id="replayBtn" type="button">Replay 😏</button>
+      `;
+      document.getElementById("replayBtn").addEventListener("click", () => location.reload());
 
       celebrate();
       extraFireworksWaves();
-      spawnSparkles(6000);
+      spawnSparkles(999999999);
       showGifModal();
 
       flashScreen();
       showApprovalStamp();
     });
-    
-    // Initialize button with glass-like appearance
+
+    // start the lyric rain immediately
+    startLyrics();
+
     updateGlassCracks();
+    document.addEventListener('touchstart', function() {}, {passive: true});
+    window.addEventListener('beforeunload', () => stopContinuousCelebration());
   </script>
 </body>
 </html>
